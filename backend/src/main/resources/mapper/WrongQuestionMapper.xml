@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ailearn.mapper.WrongQuestionMapper">
+
+    <!-- 错题列表(含题目与知识点信息) -->
+    <select id="selectWrongList" resultType="com.ailearn.vo.WrongQuestionVO">
+        select w.id, w.question_id as questionId, w.wrong_count as wrongCount, w.mastered,
+               w.last_wrong_time as lastWrongTime, w.last_answer as lastAnswer,
+               q.stem, q.type, q.difficulty, q.analysis, q.answer as referenceAnswer,
+               k.name as knowledgePointName
+        from wrong_question w
+                 join question q on q.id = w.question_id
+                 left join knowledge_point k on k.id = q.knowledge_point_id
+        where w.user_id = #{userId}
+        <if test="mastered != null"> and w.mastered = #{mastered} </if>
+        <if test="knowledgePointId != null"> and q.knowledge_point_id = #{knowledgePointId} </if>
+        order by w.last_wrong_time desc
+        limit #{limit}
+    </select>
+
+</mapper>

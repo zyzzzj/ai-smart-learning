@@ -1,0 +1,121 @@
+:root {
+  --ai-primary: #409eff;
+  --ai-bg: #f5f7fa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--ai-bg);
+  font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+  color: #303133;
+}
+
+.page-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .05);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+.stat-box {
+  background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%);
+  border: 1px solid #ebeef5;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+
+.stat-box .value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #2b3a4a;
+}
+
+.stat-box .label {
+  font-size: 13px;
+  color: #909399;
+  margin-top: 6px;
+}
+
+.question-stem {
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.option-item {
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.option-item:hover {
+  border-color: var(--ai-primary);
+}
+
+.option-item.active {
+  border-color: var(--ai-primary);
+  background: #ecf5ff;
+}
+
+.option-item.correct {
+  border-color: #67c23a;
+  background: #f0f9eb;
+}
+
+.option-item.wrong {
+  border-color: #f56c6c;
+  background: #fef0f0;
+}
+
+.analysis-box {
+  background: #f8f9fb;
+  border-left: 4px solid var(--ai-primary);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-top: 14px;
+  line-height: 1.7;
+}
+
+.markdown-body h2 {
+  font-size: 16px;
+  margin: 14px 0 8px;
+}
+
+.markdown-body li {
+  line-height: 1.9;
+}
+
+.text-muted {
+  color: #909399;
+  font-size: 13px;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

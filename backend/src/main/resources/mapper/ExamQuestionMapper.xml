@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ailearn.mapper.ExamQuestionMapper">
+
+    <!-- 试卷题目(含本场分值,不含答案) -->
+    <select id="selectPaperQuestions" resultType="com.ailearn.vo.ExamQuestionVO">
+        select q.id                     as questionId,
+               q.knowledge_point_id     as knowledgePointId,
+               k.name                   as knowledgePointName,
+               q.type,
+               q.stem,
+               q.options,
+               q.difficulty,
+               eq.score                 as score,
+               eq.sort                  as sort
+        from exam_question eq
+                 join question q on q.id = eq.question_id
+                 left join knowledge_point k on k.id = q.knowledge_point_id
+        where eq.exam_id = #{examId}
+        order by eq.sort asc, eq.id asc
+    </select>
+
+</mapper>

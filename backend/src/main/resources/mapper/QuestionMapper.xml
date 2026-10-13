@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ailearn.mapper.QuestionMapper">
+
+    <!-- 随机抽题:用于随机练习与自动组卷 -->
+    <select id="randomQuestions" resultType="com.ailearn.entity.Question">
+        select * from question
+        where deleted = 0 and status = 1
+        <if test="subjectId != null"> and subject_id = #{subjectId} </if>
+        <if test="knowledgePointId != null"> and knowledge_point_id = #{knowledgePointId} </if>
+        <if test="difficulty != null"> and difficulty = #{difficulty} </if>
+        <if test="type != null and type != ''"> and type = #{type} </if>
+        order by rand()
+        limit #{limit}
+    </select>
+
+    <!-- 热门题目:作答次数倒序 -->
+    <select id="selectHotQuestions" resultType="com.ailearn.vo.HotQuestionVO">
+        select q.id, q.stem, q.type, q.difficulty,
+               q.view_count as viewCount, q.correct_count as correctCount,
+               s.name as subjectName, k.name as knowledgePointName
+        from question q
+        left join subject s on s.id = q.subject_id
+        left join knowledge_point k on k.id = q.knowledge_point_id
+        where q.deleted = 0 and q.status = 1
+        <if test="subjectId != null"> and q.subject_id = #{subjectId} </if>
+        order by q.view_count desc, q.id desc
+        limit #{limit}
+    </select>
+
+    <!-- 知识点题量统计 -->
+    <select id="countGroupByKnowledge" resultType="java.util.Map">
+        select q.knowledge_point_id as knowledgePointId,
+               k.name                as knowledgePointName,
+               count(*)              as total
+        from question q
+                 left join knowledge_point k on k.id = q.knowledge_point_id
+        where q.deleted = 0
+        <if test="subjectId != null"> and q.subject_id = #{subjectId} </if>
+        group by q.knowledge_point_id, k.name
+    </select>
+
+</mapper>

@@ -1,0 +1,41 @@
+# ---------------- 后端构建产物 ----------------
+backend/target/
+*.jar
+!**/maven-wrapper.jar
+
+# ---------------- 前端依赖与产物 ----------------
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.cache/
+npm-debug.log*
+yarn-error.log*
+
+# ---------------- 运行数据与日志 ----------------
+data/
+logs/
+upload/
+*.log
+*.pid
+
+# ---------------- IDE / 编辑器 ----------------
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.settings/
+.project
+.classpath
+*.swp
+
+# ---------------- 操作系统 ----------------
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ---------------- 本地环境覆盖(不要把真实凭据提交上去) ----------------
+**/application-local.yml
+**/application-local.yaml
+.env
+.env.local

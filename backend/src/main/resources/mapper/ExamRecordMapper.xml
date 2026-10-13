@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ailearn.mapper.ExamRecordMapper">
+
+    <!-- 成绩排行 -->
+    <select id="selectRank" resultType="com.ailearn.vo.ScoreRankVO">
+        select r.id, r.user_id as userId, u.nickname, r.total_score as totalScore,
+               r.submit_time as submitTime, r.status
+        from exam_record r
+                 join sys_user u on u.id = r.user_id
+        where r.exam_id = #{examId} and r.status in ('SUBMITTED', 'GRADED')
+        order by r.total_score desc, r.submit_time asc
+        limit #{limit}
+    </select>
+
+    <!-- 超时未交卷的考试记录(定时任务自动交卷用) -->
+    <select id="selectExpired" resultType="com.ailearn.entity.ExamRecord">
+        select r.*
+        from exam_record r
+                 join exam e on e.id = r.exam_id
+        where r.status = 'ONGOING'
+          and e.duration is not null
+          and timestampadd(minute, e.duration, r.start_time) &lt; now()
+        limit 100
+    </select>
+
+</mapper>

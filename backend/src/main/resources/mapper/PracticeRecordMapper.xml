@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ailearn.mapper.PracticeRecordMapper">
+
+    <!-- 按知识点统计作答与正确率(学习画像 / AI 建议输入) -->
+    <select id="statsByKnowledge" resultType="com.ailearn.vo.KnowledgeStatVO">
+        select k.id   as knowledgePointId,
+               k.name as knowledgePointName,
+               count(*) as total,
+               sum(case when r.is_correct = 1 then 1 else 0 end) as correct
+        from practice_record r
+                 join question q on q.id = r.question_id
+                 left join knowledge_point k on k.id = q.knowledge_point_id
+        where r.user_id = #{userId}
+        group by k.id, k.name
+        order by total desc
+    </select>
+
+    <!-- 每日作答趋势 -->
+    <select id="statsByDay" resultType="com.ailearn.vo.DailyStatVO">
+        select date_format(r.create_time, '%Y-%m-%d') as date,
+               count(*) as answered,
+               sum(case when r.is_correct = 1 then 1 else 0 end) as correct
+        from practice_record r
+        where r.user_id = #{userId}
+          and r.create_time &gt;= #{begin}
+        group by date_format(r.create_time, '%Y-%m-%d')
+        order by date asc
+    </select>
+
+    <!-- 累计作答与耗时 -->
+    <select id="sumTimeSpent" resultType="java.lang.Long">
+        select ifnull(sum(time_spent), 0) from practice_record where user_id = #{userId}
+    </select>
+
+</mapper>

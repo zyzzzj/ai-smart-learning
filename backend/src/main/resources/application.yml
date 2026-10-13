@@ -1,0 +1,100 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: ai-learning
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${AI_DB_HOST:localhost}:${AI_DB_PORT:3306}/${AI_DB_NAME:ai_learning}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: ${AI_DB_USER:root}
+    password: ${AI_DB_PASSWORD:root}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+  data:
+    redis:
+      host: ${AI_REDIS_HOST:localhost}
+      port: ${AI_REDIS_PORT:6379}
+      database: ${AI_REDIS_DB:0}
+      password: ${AI_REDIS_PASSWORD:}
+      timeout: 5s
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+  cache:
+    type: redis
+    redis:
+      time-to-live: 30m
+      cache-null-values: false
+      key-prefix: 'ailearn:cache:'
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.ailearn.entity
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# ---------------- 业务配置 ----------------
+jwt:
+  secret: ${AI_JWT_SECRET:ailearn-secret-key-please-change-in-production-2026}
+  expire-minutes: ${AI_JWT_EXPIRE:1440}
+  header: Authorization
+  prefix: 'Bearer '
+
+# AI 大模型:provider = mock(内置模拟生成,秒级跑通) | ollama(真实调用)
+ai:
+  provider: ${AI_PROVIDER:mock}
+  ollama:
+    base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+    model: ${OLLAMA_MODEL:deepseek-r1:7b}
+    connect-timeout-seconds: 10
+    read-timeout-seconds: 300
+  prompt:
+    generate-question-file: prompts/generate-question.txt
+    grade-subjective-file: prompts/grade-subjective.txt
+    advice-file: prompts/learning-advice.txt
+
+# 对象存储:type = minio | local
+storage:
+  type: ${AI_STORAGE_TYPE:minio}
+  minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    bucket: ${MINIO_BUCKET:ai-learning}
+    presigned-expiry-seconds: 3600
+  local:
+    dir: ${AI_LOCAL_STORAGE_DIR:./upload}
+    # 相对路径即可:浏览器按当前域名端口访问,天然适配多实例/不同端口
+    url-prefix: ${AI_LOCAL_URL_PREFIX:/api/files/local}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  level:
+    root: info
+    com.ailearn: debug
+    com.ailearn.mapper: debug
